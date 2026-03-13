@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PlaneMCPServer;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -13,5 +15,13 @@ builder.Configuration
 
 var planeApiKey = builder.Configuration["PlaneAPIKey"] ?? throw new InvalidOperationException("Plane API key is not configured.");
 var baseUrl = builder.Configuration["BaseUrl"] ?? throw new InvalidOperationException("Base Url is not configured.");
-var WorkSpace = builder.Configuration["Workspace"] ?? throw new InvalidOperationException("Work space is not configured.");
+var workSpace = builder.Configuration["Workspace"] ?? throw new InvalidOperationException("Work space is not configured.");
 var projectId = builder.Configuration["projectid"] ?? throw new InvalidOperationException("project id is not configured.");
+
+
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton(sp =>
+{
+    var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+    return new PlaneApiService(httpClientFactory, baseUrl, workSpace, projectId, planeApiKey);
+});
