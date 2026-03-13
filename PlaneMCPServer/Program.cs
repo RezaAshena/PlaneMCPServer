@@ -25,3 +25,8 @@ builder.Services.AddSingleton(sp =>
     var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
     return new PlaneApiService(httpClientFactory, baseUrl, workSpace, projectId, planeApiKey);
 });
+
+builder.Services
+    .AddMcpServer()
+    .WithStdioServerTransport()
+    .WithToolsFromAssembly();
